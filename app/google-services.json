@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "986942578530",
+    "project_id": "parkease-fd195",
+    "storage_bucket": "parkease-fd195.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986942578530:android:aa63c3a1f275c12999163b",
+        "android_client_info": {
+          "package_name": "com.amityaron.parkease"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "986942578530-usji1vc4jlvatgf7b3gi9k0aktrumeat.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIvbHVWciW4Hpwe_vrx-1bDloStrI6pyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "986942578530-usji1vc4jlvatgf7b3gi9k0aktrumeat.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
