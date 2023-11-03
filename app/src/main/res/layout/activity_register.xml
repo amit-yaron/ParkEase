@@ -5,24 +5,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bg1"
+    android:background="@color/grey"
     android:padding="30dp"
     android:layout_height="match_parent"
     tools:context=".auth.RegisterActivity">
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        android:textColor="@color/blue"
-        android:text="Hello, "/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="50sp"
-        android:textStyle="bold"
-        android:textColor="@color/blue"
-        android:text="Sign up"/>
+        android:layout_marginTop="80px"
+
+        android:gravity="center"
+
+        android:textColor="@color/darkgrey"
+        android:text="Sign up"
+        android:textSize="112px"
+        android:textStyle="bold" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,10 +30,11 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="email"
+            android:hint="Email"
             android:id="@+id/regEmail"
             android:inputType="textWebEmailAddress"/>
     </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,11 +44,13 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="password"
+            android:hint="Password"
 
         android:id="@+id/regPasssword"
         android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
+
+
     <Button
         android:id="@+id/reg_sign_up"
         android:layout_width="match_parent"
@@ -58,6 +60,7 @@
         android:text="Sign Up"
         android:background="@drawable/round_btn"
         android:layout_marginTop="40dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,6 +82,6 @@
             android:textStyle="bold"
             android:textColor="@color/blue"
             android:layout_marginLeft="10dp"
-            android:text="Sign inp"/>
+            android:text="Sign in"/>
     </LinearLayout>
 </LinearLayout>
