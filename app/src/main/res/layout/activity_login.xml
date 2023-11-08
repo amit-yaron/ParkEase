@@ -55,14 +55,17 @@
             android:inputType="textPassword"/>
 
     </com.google.android.material.textfield.TextInputLayout>
-    <Button
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/sign_in"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAllCaps="false"
         android:textStyle="bold"
         android:textSize="20sp"
+        android:textColor="@color/white"
         android:text="Sign in"
-        android:background="@drawable/round_btn"
+        android:background="@drawable/auth_button"
         android:layout_marginTop="40dp"/>
 
     <LinearLayout
