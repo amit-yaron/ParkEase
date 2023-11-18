@@ -16,6 +16,8 @@ import com.amityaron.parkease.AuthActivity;
 import com.amityaron.parkease.R;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Objects;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link RegisterFragment#newInstance} factory method to
@@ -87,13 +89,13 @@ public class RegisterFragment extends Fragment {
                 TextInputLayout emailTextInputLayout = rootView.findViewById(R.id.email);
                 TextInputLayout passwordTextInputLayout = rootView.findViewById(R.id.password);
 
-                String email = String.valueOf(emailTextInputLayout.getEditText().getText());
-                String password = String.valueOf(passwordTextInputLayout.getEditText().getText());
+                try {
+                    String email = Objects.requireNonNull(emailTextInputLayout.getEditText()).getText().toString();
+                    String password = Objects.requireNonNull(passwordTextInputLayout.getEditText()).getText().toString();
 
-                if (email.equals(null) || password.equals(null)) {
-                    Toast.makeText(rootView.getContext(), "Some Fields Are Null", Toast.LENGTH_LONG).show();
-                } else {
                     new AuthHandler(getContext()).signup(email, password);
+                } catch (Exception e) {
+                    Toast.makeText(rootView.getContext(), "Some Fields Are Null", Toast.LENGTH_LONG).show();
                 }
             }
         });
