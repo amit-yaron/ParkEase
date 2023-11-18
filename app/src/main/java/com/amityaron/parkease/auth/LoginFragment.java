@@ -12,10 +12,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amityaron.parkease.AuthActivity;
 import com.amityaron.parkease.MainActivity;
 import com.amityaron.parkease.R;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
@@ -81,6 +83,24 @@ public class LoginFragment extends Fragment {
                 Intent intent = new Intent(activity, AuthActivity.class);
                 intent.putExtra("type", "register");
                 startActivity(intent);
+            }
+        });
+
+        // Handle Login
+        rootView.findViewById(R.id.send_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextInputLayout emailTextInputLayout = rootView.findViewById(R.id.email);
+                TextInputLayout passwordTextInputLayout = rootView.findViewById(R.id.password);
+
+                String email = String.valueOf(emailTextInputLayout.getEditText().getText());
+                String password = String.valueOf(passwordTextInputLayout.getEditText().getText());
+
+                if (email.equals(null) || password.equals(null)) {
+                    Toast.makeText(rootView.getContext(), "Some Fields Are Null", Toast.LENGTH_LONG).show();
+                } else {
+                    new AuthHandler(getContext()).login(email, password);
+                }
             }
         });
 

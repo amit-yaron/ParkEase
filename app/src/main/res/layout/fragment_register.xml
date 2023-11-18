@@ -20,6 +20,7 @@
         tools:ignore="HardcodedText" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/email"
         android:layout_height="wrap_content"
         android:layout_width="300sp"
         android:hint="Email"
@@ -36,6 +37,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/password"
         android:layout_height="wrap_content"
         android:layout_width="300sp"
         android:hint="Password"
@@ -52,6 +54,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
+        android:id="@+id/send_button"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginTop="12dp"
