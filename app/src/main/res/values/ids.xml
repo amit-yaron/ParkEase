@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="parentLayout" type="id" />
+    <item name="stars" type="id" />
+    <item name="lotName" type="id" />
+</resources>
