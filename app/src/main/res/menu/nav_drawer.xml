@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
     <group
         android:id="@+id/group"
         android:checkableBehavior="single">
+        <item
+            android:id="@+id/login"
+            android:icon="@drawable/ic_login_foreground"
+            android:onClick="goToLogin"
+            android:title="Login" />
 
+        <item android:id="@+id/signup"
+            android:icon="@drawable/ic_signup_foreground"
+            android:onClick="goToRegister"
+            android:title="Signup" />
+
+        <item android:id="@+id/logout"
+            android:icon="@drawable/ic_logout_foreground"
+            android:title="Logout" />
     </group>
 </menu>
