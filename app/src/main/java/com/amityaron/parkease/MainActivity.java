@@ -11,9 +11,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.amityaron.parkease.auth.LoginActivity;
-import com.amityaron.parkease.auth.RegisterActivity;
-
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -41,10 +38,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToLogin(MenuItem item) {
-        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+        intent.putExtra("type", "login");
+        startActivity(intent);
     }
 
     public void goToRegister(MenuItem item) {
-        startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+        Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+        intent.putExtra("type", "register");
+        startActivity(intent);
     }
+
+
 }
