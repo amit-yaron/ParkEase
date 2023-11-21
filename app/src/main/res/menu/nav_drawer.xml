@@ -16,9 +16,5 @@
             android:icon="@drawable/ic_signup_foreground"
             android:onClick="goToRegister"
             android:title="Signup" />
-
-        <item android:id="@+id/logout"
-            android:icon="@drawable/ic_logout_foreground"
-            android:title="Logout" />
     </group>
 </menu>
