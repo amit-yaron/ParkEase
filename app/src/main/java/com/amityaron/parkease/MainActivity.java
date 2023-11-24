@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.amityaron.parkease.main.HomeFragment;
+import com.amityaron.parkease.main.LotsFragment;
 import com.amityaron.parkease.main.PersonFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
@@ -66,6 +67,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void goToLots(MenuItem menuItem) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        transaction.replace(R.id.container, new LotsFragment()).commit();
+    }
+
     public void goToPerson(MenuItem menuItem) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -81,6 +89,14 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("Log In", (dialog, which) -> goToLogin())
                     .show();
         }
+    }
+
+    public void seeAbout(MenuItem menuItem) {
+        new MaterialAlertDialogBuilder(MainActivity.this)
+                .setTitle("About")
+                .setMessage("This is app for parking car and looking for parking to park car")
+                .setNegativeButton("Cancel", (dialog, which) -> goToHome())
+                .show();
     }
 
     public void goToHome(MenuItem ignoredMenuItem) {

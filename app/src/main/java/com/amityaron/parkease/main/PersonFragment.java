@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,6 +91,11 @@ public class PersonFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 new AuthHandler(getContext()).logout();
+
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+
+                transaction.replace(R.id.container, new HomeFragment()).commit();
             }
         });
 

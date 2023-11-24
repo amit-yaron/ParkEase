@@ -9,10 +9,10 @@
         android:id="@+id/home"
         android:onClick="goToHome"
         android:title="Home"
-        android:checked="true"
         android:icon="@drawable/ic_home_foreground"/>
     <item
         android:id="@+id/list"
+        android:onClick="goToLots"
         android:title="List"
         android:icon="@drawable/ic_list_foreground"/>
 </menu>
