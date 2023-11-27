@@ -67,6 +67,7 @@ public class AuthHandler {
                                     .setPhotoUri(Uri.parse("https://pbs.twimg.com/profile_images/1546346320025247745/wC2QUs0x_400x400.jpg"))
                                     .build();
 
+                            assert user != null;
                             user.updateProfile(profilesUpdates);
 
                             showToast("Sign-up successful");

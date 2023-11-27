@@ -67,7 +67,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Check If TND "/>
+                android:text="Check Account Status "/>
         </LinearLayout>
 
         <LinearLayout

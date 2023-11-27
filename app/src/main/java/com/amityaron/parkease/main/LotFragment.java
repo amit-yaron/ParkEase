@@ -31,7 +31,6 @@ public class LotFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     public static LotFragment newInstance(String param1, String param2) {
         LotFragment fragment = new LotFragment();
         Bundle args = new Bundle();
@@ -42,9 +41,7 @@ public class LotFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,10 +50,8 @@ public class LotFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_lot, container, false);
 
         GridLayout gridLayout = rootView.findViewById(R.id.gridLayout);
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Bundle bundle = this.getArguments();
-
 
         db.collection("lots")
             .document(bundle.get("lotName").toString())
@@ -110,17 +105,9 @@ public class LotFragment extends Fragment {
                                 gridLayout.addView(imageView);
                             }
                         }
-
-                        Log.d("Nigger", String.valueOf(lotData[0][4]));
-                    } else {
-                        Log.e("Nigger", "Problem");
                     }
-
-
                 }
         });
-
-
 
         return  rootView;
     }
