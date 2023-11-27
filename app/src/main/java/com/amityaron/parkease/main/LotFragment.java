@@ -2,8 +2,10 @@ package com.amityaron.parkease.main;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amityaron.parkease.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,33 +27,14 @@ import com.amityaron.parkease.R;
  */
 public class LotFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     public LotFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LotFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static LotFragment newInstance(String param1, String param2) {
         LotFragment fragment = new LotFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,11 +42,9 @@ public class LotFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,37 +54,73 @@ public class LotFragment extends Fragment {
 
         GridLayout gridLayout = rootView.findViewById(R.id.gridLayout);
 
-        gridLayout.setColumnCount(5);
-        gridLayout.setRowCount(6);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Bundle bundle = this.getArguments();
 
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 5; j++) {
-                // Create ImageView
-                ImageView imageView = new ImageView(getContext());
-                imageView.setImageResource(R.drawable.free_spot);
 
-                // Set layout parameters for each ImageView
-                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                params.height = 142;
-                params.width = 142;
+        db.collection("lots")
+            .document(bundle.get("lotName").toString())
+            .get()
+            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot doc = task.getResult();
+                        Gson gson = new Gson();
 
-                params.setMargins(8, 8, 8, 8); // Adjust margins as needed
+                        String lotJsonString = doc.getString("lot");
+                        boolean[][] lotData = gson.fromJson(lotJsonString, boolean[][].class);
 
-                imageView.setLayoutParams(params);
+                        int row = lotData.length;
+                        int count = lotData[0].length;
 
-                // Set click listener for each ImageView
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Handle item click (you can perform actions based on the clicked item)
-                        Toast.makeText(getContext(), "Item Clicked", Toast.LENGTH_SHORT).show();
+                        gridLayout.setColumnCount(count);
+                        gridLayout.setRowCount(row);
+
+                        for (int i = 0; i < row; i++) {
+                            for (int j = 0; j < count; j++) {
+                                // Create ImageView
+                                ImageView imageView = new ImageView(getContext());
+
+                                if (!lotData[i][j]) {
+                                    imageView.setImageResource(R.drawable.taken_spot);
+                                } else {
+                                    imageView.setImageResource(R.drawable.free_spot);
+                                }
+
+                                // Set layout parameters for each ImageView
+                                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+                                params.height = 142;
+                                params.width = 142;
+
+                                params.setMargins(8, 8, 8, 8); // Adjust margins as needed
+
+                                imageView.setLayoutParams(params);
+
+                                // Set click listener for each ImageView
+                                imageView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        // Handle item click (you can perform actions based on the clicked item)
+                                        Toast.makeText(getContext(), "Item Clicked", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                                // Add ImageView to GridLayout
+                                gridLayout.addView(imageView);
+                            }
+                        }
+
+                        Log.d("Nigger", String.valueOf(lotData[0][4]));
+                    } else {
+                        Log.e("Nigger", "Problem");
                     }
-                });
 
-                // Add ImageView to GridLayout
-                gridLayout.addView(imageView);
-            }
-        }
+
+                }
+        });
+
+
 
         return  rootView;
     }

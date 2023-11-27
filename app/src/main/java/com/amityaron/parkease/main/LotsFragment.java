@@ -2,6 +2,7 @@ package com.amityaron.parkease.main;
 
 import static com.google.android.material.internal.ViewUtils.dpToPx;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -39,6 +40,7 @@ public class LotsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -56,6 +58,7 @@ public class LotsFragment extends Fragment {
      * @return A new instance of fragment LotsFragment.
      */
     // TODO: Rename and change types and number of parameters
+
     public static LotsFragment newInstance(String param1, String param2) {
         LotsFragment fragment = new LotsFragment();
         Bundle args = new Bundle();
@@ -75,17 +78,14 @@ public class LotsFragment extends Fragment {
         }
     }
 
-//    CardView lotCardView(String name, String address, String city, int stars, int toll) {
-//
-//        TextView name = cardView.findViewById(R.id.name);
-//        name.setText("שמנמ");
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView =  inflater.inflate(R.layout.fragment_lots, container, false);
+
+        Bundle bundle = new Bundle();
 
         LinearLayout linearLayout = rootView.findViewById(R.id.list);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -102,10 +102,15 @@ public class LotsFragment extends Fragment {
                                 cardView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
+                                        bundle.putString("lotName", doc.getId());
+
                                         FragmentManager manager = getActivity().getSupportFragmentManager();
                                         FragmentTransaction transaction = manager.beginTransaction();
 
-                                        transaction.replace(R.id.container, new LotFragment()).commit();
+                                        LotFragment lotFragment = new LotFragment();
+                                        lotFragment.setArguments(bundle);
+
+                                        transaction.replace(R.id.container, lotFragment).commit();
                                     }
                                 });
 
@@ -114,6 +119,7 @@ public class LotsFragment extends Fragment {
                                 TextView city = cardView.findViewById(R.id.city);
                                 TextView stars = cardView.findViewById(R.id.stars);
                                 TextView toll = cardView.findViewById(R.id.toll);
+
 
                                 name.setText(doc.get("name").toString());
                                 address.setText(doc.get("address").toString());
