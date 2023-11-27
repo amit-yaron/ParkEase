@@ -13,9 +13,11 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.amityaron.parkease.MainActivity;
 import com.amityaron.parkease.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
@@ -41,6 +43,19 @@ public class LotFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    void handlePayments(boolean taken, int row, int col) {
+        if (taken) {
+            Toast.makeText(getContext(), "Parking Taken!", Toast.LENGTH_LONG).show();
+        } else {
+            new MaterialAlertDialogBuilder(getContext())
+                    .setTitle("Want to rent the spot?")
+                    .setMessage("Row: " + (row + 1) + " Col: " + (col + 1))
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .setPositiveButton("Buy", (dialog, which) -> dialog.dismiss())
+                    .show();
+        }
     }
 
     @Override
@@ -77,7 +92,7 @@ public class LotFragment extends Fragment {
                                 // Create ImageView
                                 ImageView imageView = new ImageView(getContext());
 
-                                if (!lotData[i][j]) {
+                                if (lotData[i][j]) {
                                     imageView.setImageResource(R.drawable.taken_spot);
                                 } else {
                                     imageView.setImageResource(R.drawable.free_spot);
@@ -93,11 +108,12 @@ public class LotFragment extends Fragment {
                                 imageView.setLayoutParams(params);
 
                                 // Set click listener for each ImageView
+                                int finalI = i;
+                                int finalJ = j;
                                 imageView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        // Handle item click (you can perform actions based on the clicked item)
-                                        Toast.makeText(getContext(), "Item Clicked", Toast.LENGTH_SHORT).show();
+                                        handlePayments(lotData[finalI][finalJ], finalI, finalJ);
                                     }
                                 });
 

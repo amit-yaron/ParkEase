@@ -28,6 +28,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.nio.file.Files;
+
 public class LotsFragment extends Fragment {
     public LotsFragment() {
         // Required empty public constructor
