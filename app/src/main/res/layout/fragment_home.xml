@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".main.HomeFragment">
+    tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/welcomeText"
@@ -31,6 +31,7 @@
         android:orientation="vertical">
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
+            android:onClick="goToLots"
             android:elevation="10dp"
             app:cardMaxElevation="12dp"
             app:cardCornerRadius="20dp"

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:elevation="10dp"
+    app:cardMaxElevation="12dp"
+    app:cardCornerRadius="20dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_height="140dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="5dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_park_foreground"
+        android:layout_gravity="center_vertical"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/name"
+        android:layout_marginBottom="25dp"
+        android:layout_marginStart="90dp"
+        android:layout_gravity="clip_horizontal|center_vertical"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:text="Tel Aviv Parking Spot"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/shekels"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="270dp"
+        android:layout_gravity="clip_horizontal|center_vertical"
+        android:textSize="14dp"
+        android:textStyle="bold"
+        android:text="Shekels₪"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="90dp"
+        android:id="@+id/minutes"
+        android:textStyle="bold"
+        android:layout_gravity="clip_horizontal|center_vertical"
+        android:textSize="14dp"
+        android:text="Minutes" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:id="@+id/date"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="90dp"
+        android:layout_gravity="clip_horizontal|center_vertical"
+        android:textSize="16dp"
+        android:text="27.11.23" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/time"
+        android:layout_marginTop="40dp"
+        android:textStyle="bold"
+        android:layout_marginStart="270dp"
+        android:layout_gravity="clip_horizontal|center_vertical"
+        android:textSize="16dp"
+        android:text="9:43" />
+
+</androidx.cardview.widget.CardView>

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".main.PersonFragment">
+    tools:context=".MainActivity">
 
     <androidx.cardview.widget.CardView
         android:layout_width="80dp"
@@ -43,6 +43,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:gravity="center"
+            android:onClick="viewPayments"
             android:layout_marginStart="48dp"
             android:layout_height="36dp">
             <ImageView
@@ -54,26 +55,12 @@
                 android:layout_height="wrap_content"
                 android:text="View Payment History"/>
         </LinearLayout>
-        <LinearLayout
-
-            android:layout_width="wrap_content"
-            android:layout_marginStart="48dp"
-            android:gravity="center"
-            android:layout_height="36dp">
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_person_foreground"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Check Account Status "/>
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_marginStart="48dp"
             android:gravity="center"
+            android:onClick="goToHome"
             android:layout_height="36dp">
             <ImageView
                 android:layout_width="48dp"
@@ -89,6 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_marginStart="48dp"
             android:gravity="center"
+            android:onClick="viewProfileInfo"
             android:layout_height="36dp">
             <ImageView
                 android:layout_width="48dp"
@@ -106,7 +94,7 @@
             android:layout_marginTop="118dp"
             android:layout_gravity="center"
             android:text="Logout"
-            app:icon="@drawable/ic_logout_foreground"
+            app:icon="@drawable/ic_person_foreground"
             style="@style/Widget.MaterialComponents.Button.Icon"
             />
     </LinearLayout>

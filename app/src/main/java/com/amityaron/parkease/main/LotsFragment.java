@@ -71,6 +71,8 @@ public class LotsFragment extends Fragment {
                                     @Override
                                     public void onClick(View v) {
                                         bundle.putString("lotName", doc.getId());
+                                        bundle.putString("lotNameString", doc.get("name").toString());
+                                        bundle.putString("lotToll", doc.get("tollperhour").toString());
 
                                         FragmentManager manager = getActivity().getSupportFragmentManager();
                                         FragmentTransaction transaction = manager.beginTransaction();
@@ -93,7 +95,7 @@ public class LotsFragment extends Fragment {
                                 address.setText(doc.get("address").toString());
                                 city.setText(doc.get("city").toString());
                                 stars.setText(doc.get("stars").toString() + "/5");
-                                toll.setText(doc.get("tollperhour") + "$/h");
+                                toll.setText(doc.get("tollperhour") + "₪/h");
 
                                 linearLayout.addView(cardView);
                             }

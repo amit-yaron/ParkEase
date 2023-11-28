@@ -1,26 +1,43 @@
 package com.amityaron.parkease.main;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.amityaron.parkease.AuthActivity;
 import com.amityaron.parkease.MainActivity;
 import com.amityaron.parkease.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,17 +62,65 @@ public class LotFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    void handlePayments(boolean taken, int row, int col) {
+    void handlePayments(boolean taken, int row, int col, Bundle bundle) {
         if (taken) {
             Toast.makeText(getContext(), "Parking Taken!", Toast.LENGTH_LONG).show();
         } else {
-            new MaterialAlertDialogBuilder(getContext())
-                    .setTitle("Want to rent the spot?")
-                    .setMessage("Row: " + (row + 1) + " Col: " + (col + 1))
-                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                    .setPositiveButton("Buy", (dialog, which) -> dialog.dismiss())
-                    .show();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+            if (user != null) {
+                new MaterialAlertDialogBuilder(getContext())
+                        .setTitle("Want to rent the spot?")
+                        .setMessage("Row: " + (row + 1) + " Col: " + (col + 1))
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                        .setPositiveButton("Buy", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                Map<String, Object> data = new HashMap<>();
+
+                                int minutes = ThreadLocalRandom.current().nextInt(25, 90 + 1);
+                                int toll = Integer.parseInt(bundle.get("lotToll").toString());
+                                int shekels = (int) ((double) minutes / 60 * toll);
+
+                                data.put("date", new Timestamp(new Date()));
+                                data.put("name", bundle.get("lotNameString"));
+                                data.put("uid", user.getUid());
+                                data.put("minutes", minutes);
+                                data.put("shekels", shekels);
+                                data.put("lotId", bundle.get("lotName"));
+
+                                db.collection("payments")
+                                        .add(data)
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                Toast.makeText(getContext(), "Lot Bought!", Toast.LENGTH_LONG).show();
+
+                                                FragmentManager manager = getActivity().getSupportFragmentManager();
+                                                FragmentTransaction transaction = manager.beginTransaction();
+
+                                                transaction.replace(R.id.container, new HomeFragment()).commit();
+                                            }
+                                        });
+
+                            }
+                        })
+                        .show();
+            } else {
+                new MaterialAlertDialogBuilder(getContext())
+                        .setTitle("You're not logged in")
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                        .setPositiveButton("Log In", (dialog, which) -> goToLogin())
+                        .show();
+            }
         }
+    }
+
+    public void goToLogin() {
+        Intent intent = new Intent(getContext(), AuthActivity.class);
+        intent.putExtra("type", "login");
+        startActivity(intent);
     }
 
     @Override
@@ -113,7 +178,7 @@ public class LotFragment extends Fragment {
                                 imageView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        handlePayments(lotData[finalI][finalJ], finalI, finalJ);
+                                        handlePayments(lotData[finalI][finalJ], finalI, finalJ, bundle);
                                     }
                                 });
 

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.amityaron.parkease.main.HomeFragment;
 import com.amityaron.parkease.main.LotsFragment;
+import com.amityaron.parkease.main.PaymentsFragment;
 import com.amityaron.parkease.main.PersonFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,11 +50,32 @@ public class MainActivity extends AppCompatActivity {
         goToHome();
     }
 
+    public void viewProfileInfo(View view) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        new MaterialAlertDialogBuilder(MainActivity.this)
+                .setTitle("Profile Info")
+                .setMessage(
+                "Email: " + user.getEmail() + "\n"
+                + "Name: " + user.getDisplayName() + "\n"
+                + "User ID: " + user.getUid() + "\n")
+                .setPositiveButton("Done", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
     public void goToLogin(MenuItem item) {
         Intent intent = new Intent(MainActivity.this, AuthActivity.class);
         intent.putExtra("type", "login");
         startActivity(intent);
     }
+
+    public void viewPayments(View view) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        transaction.replace(R.id.container, new PaymentsFragment()).commit();
+    }
+
 
     public void goToLogin() {
         Intent intent = new Intent(MainActivity.this, AuthActivity.class);
@@ -74,7 +96,32 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.container, new LotsFragment()).commit();
     }
 
+    public void goToLots(View view) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        transaction.replace(R.id.container, new LotsFragment()).commit();
+    }
+
+
     public void goToPerson(MenuItem menuItem) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+
+            transaction.replace(R.id.container, new PersonFragment()).commit();
+        } else {
+            new MaterialAlertDialogBuilder(MainActivity.this)
+                    .setTitle("You're not logged in")
+                    .setNegativeButton("Cancel", (dialog, which) -> goToHome())
+                    .setPositiveButton("Log In", (dialog, which) -> goToLogin())
+                    .show();
+        }
+    }
+
+    public void goToPerson(View view) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
@@ -105,6 +152,14 @@ public class MainActivity extends AppCompatActivity {
 
         transaction.replace(R.id.container, new HomeFragment()).commit();
     }
+
+    public void goToHome(View view) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        transaction.replace(R.id.container, new HomeFragment()).commit();
+    }
+
 
     public void goToHome() {
         FragmentManager manager = getSupportFragmentManager();
