@@ -8,22 +8,22 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.amityaron.parkease.main.HomeFragment;
-import com.amityaron.parkease.main.LotsFragment;
+import com.amityaron.parkease.main.MapFragment;
 import com.amityaron.parkease.main.PaymentsFragment;
 import com.amityaron.parkease.main.PersonFragment;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,18 +89,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goToLots(MenuItem menuItem) {
+    public void goToMaps(MenuItem menuItem) {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
-        transaction.replace(R.id.container, new LotsFragment()).commit();
-    }
-
-    public void goToLots(View view) {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-
-        transaction.replace(R.id.container, new LotsFragment()).commit();
+        transaction.replace(R.id.container, new MapFragment()).commit();
     }
 
 
@@ -166,5 +159,10 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = manager.beginTransaction();
 
         transaction.replace(R.id.container, new HomeFragment()).commit();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
     }
 }

@@ -95,7 +95,7 @@ public class LotFragment extends Fragment {
                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
-                                                Toast.makeText(getContext(), "Lot Bought!", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getContext(), "Spot Bought!", Toast.LENGTH_LONG).show();
 
                                                 FragmentManager manager = getActivity().getSupportFragmentManager();
                                                 FragmentTransaction transaction = manager.beginTransaction();
