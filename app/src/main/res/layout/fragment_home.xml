@@ -97,6 +97,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_marginTop="20dp"
+            android:onClick="goToManage"
             android:elevation="10dp"
             android:layout_marginBottom="10dp"
             app:cardMaxElevation="12dp"

@@ -77,32 +77,29 @@ public class LotFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
                                 Map<String, Object> data = new HashMap<>();
-
-                                int minutes = ThreadLocalRandom.current().nextInt(25, 90 + 1);
-                                int toll = Integer.parseInt(bundle.get("lotToll").toString());
-                                int shekels = (int) ((double) minutes / 60 * toll);
-
-                                data.put("date", new Timestamp(new Date()));
-                                data.put("name", bundle.get("lotNameString"));
+                                data.put("value", new Timestamp(new Date()));
                                 data.put("uid", user.getUid());
-                                data.put("minutes", minutes);
-                                data.put("shekels", shekels);
-                                data.put("lotId", bundle.get("lotName"));
 
-                                db.collection("payments")
-                                        .add(data)
-                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                            @Override
-                                            public void onSuccess(DocumentReference documentReference) {
-                                                Toast.makeText(getContext(), "Spot Bought!", Toast.LENGTH_LONG).show();
+                                db.collection("parks").add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(getContext(), "yes", Toast.LENGTH_LONG).show();
 
-                                                FragmentManager manager = getActivity().getSupportFragmentManager();
-                                                FragmentTransaction transaction = manager.beginTransaction();
-
-                                                transaction.replace(R.id.container, new HomeFragment()).commit();
-                                            }
-                                        });
+                                            ManageFragment manageFragment = new ManageFragment();
+                                            manageFragment.setArguments(bundle);
+                                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                            transaction.replace(R.id.container, manageFragment);
+                                            transaction.commit();
+                                        }
+                                        else {
+                                            Toast.makeText(getContext(), "yes", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
 
                             }
                         })
@@ -134,61 +131,61 @@ public class LotFragment extends Fragment {
         Bundle bundle = this.getArguments();
 
         db.collection("lots")
-            .document(bundle.get("lotName").toString())
-            .get()
-            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot doc = task.getResult();
-                        Gson gson = new Gson();
+                .document(bundle.get("lotName").toString())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot doc = task.getResult();
+                            Gson gson = new Gson();
 
-                        String lotJsonString = doc.getString("lot");
-                        boolean[][] lotData = gson.fromJson(lotJsonString, boolean[][].class);
+                            String lotJsonString = doc.getString("lot");
+                            boolean[][] lotData = gson.fromJson(lotJsonString, boolean[][].class);
 
-                        int row = lotData.length;
-                        int count = lotData[0].length;
+                            int row = lotData.length;
+                            int count = lotData[0].length;
 
-                        gridLayout.setColumnCount(count);
-                        gridLayout.setRowCount(row);
+                            gridLayout.setColumnCount(count);
+                            gridLayout.setRowCount(row);
 
-                        for (int i = 0; i < row; i++) {
-                            for (int j = 0; j < count; j++) {
-                                // Create ImageView
-                                ImageView imageView = new ImageView(getContext());
+                            for (int i = 0; i < row; i++) {
+                                for (int j = 0; j < count; j++) {
+                                    // Create ImageView
+                                    ImageView imageView = new ImageView(getContext());
 
-                                if (lotData[i][j]) {
-                                    imageView.setImageResource(R.drawable.taken_spot);
-                                } else {
-                                    imageView.setImageResource(R.drawable.free_spot);
-                                }
-
-                                // Set layout parameters for each ImageView
-                                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                                params.height = 142;
-                                params.width = 142;
-
-                                params.setMargins(8, 8, 8, 8); // Adjust margins as needed
-
-                                imageView.setLayoutParams(params);
-
-                                // Set click listener for each ImageView
-                                int finalI = i;
-                                int finalJ = j;
-                                imageView.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        handlePayments(lotData[finalI][finalJ], finalI, finalJ, bundle);
+                                    if (lotData[i][j]) {
+                                        imageView.setImageResource(R.drawable.taken_spot);
+                                    } else {
+                                        imageView.setImageResource(R.drawable.free_spot);
                                     }
-                                });
 
-                                // Add ImageView to GridLayout
-                                gridLayout.addView(imageView);
+                                    // Set layout parameters for each ImageView
+                                    GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+                                    params.height = 142;
+                                    params.width = 142;
+
+                                    params.setMargins(8, 8, 8, 8); // Adjust margins as needed
+
+                                    imageView.setLayoutParams(params);
+
+                                    // Set click listener for each ImageView
+                                    int finalI = i;
+                                    int finalJ = j;
+                                    imageView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            handlePayments(lotData[finalI][finalJ], finalI, finalJ, bundle);
+                                        }
+                                    });
+
+                                    // Add ImageView to GridLayout
+                                    gridLayout.addView(imageView);
+                                }
                             }
                         }
                     }
-                }
-        });
+                });
 
         return  rootView;
     }

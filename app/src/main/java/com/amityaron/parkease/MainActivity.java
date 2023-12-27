@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.amityaron.parkease.main.HomeFragment;
+import com.amityaron.parkease.main.ManageFragment;
 import com.amityaron.parkease.main.MapFragment;
 import com.amityaron.parkease.main.PaymentsFragment;
 import com.amityaron.parkease.main.PersonFragment;
@@ -145,6 +146,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         transaction.replace(R.id.container, new HomeFragment()).commit();
     }
+
+    public void goToManage(View view) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        transaction.replace(R.id.container, new ManageFragment()).commit();
+    }
+
 
     public void goToHome(View view) {
         FragmentManager manager = getSupportFragmentManager();
