@@ -8,13 +8,18 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/login"
-            android:icon="@drawable/ic_login_foreground"
-            android:onClick="goToLogin"
-            android:title="Login" />
+            android:icon="@drawable/ic_list_foreground"
+            android:onClick="goToMaps"
+            android:title="List" />
+        <item
+            android:id="@+id/nig"
+            android:icon="@drawable/ic_park_foreground"
+            android:onClick="goToManage"
+            android:title="Manage"/>
 
         <item android:id="@+id/signup"
-            android:icon="@drawable/ic_signup_foreground"
-            android:onClick="goToRegister"
-            android:title="Signup" />
+            android:icon="@drawable/ic_person_foreground"
+            android:onClick="goToPerson"
+            android:title="Person" />
     </group>
 </menu>

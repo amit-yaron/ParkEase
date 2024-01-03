@@ -31,7 +31,7 @@
         android:orientation="vertical">
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:onClick="goToLots"
+            android:onClick="goToMaps"
             android:elevation="10dp"
             app:cardMaxElevation="12dp"
             app:cardCornerRadius="20dp"

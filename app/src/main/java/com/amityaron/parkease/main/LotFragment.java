@@ -81,6 +81,9 @@ public class LotFragment extends Fragment {
 
                                 Map<String, Object> data = new HashMap<>();
                                 data.put("value", new Timestamp(new Date()));
+                                data.put("lotToll", bundle.get("lotToll"));
+                                data.put("lotNameString", bundle.get("lotNameString"));
+                                data.put("lotName", bundle.get("lotName"));
                                 data.put("uid", user.getUid());
 
                                 db.collection("parks").add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {

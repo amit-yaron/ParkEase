@@ -86,7 +86,7 @@ public class ManageFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.getResult().getDocuments().isEmpty()) {
-                            text.setText("0 parking ass nigga");
+                            text.setText("no parking");
                             return;
                         }
                         if (task.isSuccessful()) {
@@ -136,15 +136,15 @@ public class ManageFragment extends Fragment {
 
                                     long minutes = (secondsPassed / 60);
 
-                                    int toll = Integer.parseInt(bundle.get("lotToll").toString());
+                                    int toll = Integer.parseInt(doc.get("lotToll").toString());
                                     int shekels = (int) ((double) minutes / 60 * toll);
 
                                     data.put("date", new Timestamp(new Date()));
-                                    data.put("name", bundle.get("lotNameString"));
+                                    data.put("name", doc.get("lotNameString"));
                                     data.put("uid", user.getUid());
                                     data.put("minutes", minutes);
                                     data.put("shekels", shekels);
-                                    data.put("lotId", bundle.get("lotName"));
+                                    data.put("lotId", doc.get("lotName"));
 
                                     db.collection("payments")
                                             .add(data)

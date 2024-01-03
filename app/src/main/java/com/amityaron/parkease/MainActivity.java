@@ -98,6 +98,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+    public void goToMaps(View view) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        transaction.replace(R.id.container, new MapFragment()).commit();
+    }
+
+
     public void goToPerson(MenuItem menuItem) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -153,6 +161,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         transaction.replace(R.id.container, new ManageFragment()).commit();
     }
+
+    public void goToManage(MenuItem menuItem) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        transaction.replace(R.id.container, new ManageFragment()).commit();
+    }
+
 
 
     public void goToHome(View view) {
