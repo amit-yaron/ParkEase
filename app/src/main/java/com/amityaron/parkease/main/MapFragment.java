@@ -1,8 +1,16 @@
 package com.amityaron.parkease.main;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -10,19 +18,24 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.amityaron.parkease.MainActivity;
 import com.amityaron.parkease.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -33,7 +46,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public MapFragment() {
         // Required empty public constructor
     }
-
 
     public static MapFragment newInstance(String param1, String param2) {
         MapFragment fragment = new MapFragment();
@@ -62,29 +74,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     Bundle bundle = new Bundle();
 
+
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.0853, 34.7818), 7.0f));
         db.collection("lots").get()
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (DocumentSnapshot doc : task.getResult()) {
-                            double latitude = (double) doc.get("latitude");
-                            double longitude = (double) doc.get("longitude");
-                            String name = doc.get("name").toString();
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot doc : task.getResult()) {
+                                double latitude = (double) doc.get("latitude");
+                                double longitude = (double) doc.get("longitude");
+                                String name = doc.get("name").toString();
 
-                            Marker marker = googleMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(latitude, longitude))
-                                .title(name));
+                                Marker marker = googleMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(latitude, longitude))
+                                        .title(name));
 
-                            marker.setTag(doc.getId());
+                                marker.setTag(doc.getId());
+                            }
                         }
                     }
-                }
-            });
+                });
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -108,18 +122,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                             + "Toll: " + doc.get("tollperhour") + "₪/h" + "\n")
                                             .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                                             .setPositiveButton("Buy", (dialog, which) -> {
-                                                bundle.putString("lotName", doc.getId());
-                                                bundle.putString("lotNameString", doc.get("name").toString());
-                                                bundle.putString("lotToll", doc.get("tollperhour").toString());
+                                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                db.collection("parks").whereEqualTo("uid", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            if (!task.getResult().isEmpty()) {
+                                                                new MaterialAlertDialogBuilder(getContext())
+                                                                        .setTitle("You already have parking")
+                                                                        .setNegativeButton("Cancel", (dialog, which) -> {
+                                                                            dialog.dismiss();
+                                                                        })
+                                                                        .show();
 
-                                                FragmentManager manager = getActivity().getSupportFragmentManager();
-                                                FragmentTransaction transaction = manager.beginTransaction();
+                                                            } else {
+                                                                bundle.putString("lotName", doc.getId());
+                                                                bundle.putString("lotNameString", doc.get("name").toString());
+                                                                bundle.putString("lotToll", doc.get("tollperhour").toString());
 
-                                                LotFragment lotFragment = new LotFragment();
-                                                lotFragment.setArguments(bundle);
+                                                                FragmentManager manager = getActivity().getSupportFragmentManager();
+                                                                FragmentTransaction transaction = manager.beginTransaction();
 
-                                                transaction.replace(R.id.container, lotFragment).commit();
-                                                dialog.dismiss();
+                                                                LotFragment lotFragment = new LotFragment();
+                                                                lotFragment.setArguments(bundle);
+
+                                                                transaction.replace(R.id.container, lotFragment).commit();
+                                                                dialog.dismiss();
+                                                            }
+                                                        }
+                                                    }
+                                                });
                                             })
                                             .show();
                                 }
@@ -130,4 +162,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
     }
+
 }

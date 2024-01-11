@@ -1,5 +1,7 @@
 package com.amityaron.parkease.main;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -60,6 +62,7 @@ public class PersonFragment extends Fragment {
         // Logout Button
         Button logoutButton = rootView.findViewById(R.id.logout);
         logoutButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("UnsafeIntentLaunch")
             @Override
             public void onClick(View v) {
                 new AuthHandler(getContext()).logout();
@@ -68,6 +71,9 @@ public class PersonFragment extends Fragment {
                 FragmentTransaction transaction = manager.beginTransaction();
 
                 transaction.replace(R.id.container, new HomeFragment()).commit();
+
+                getActivity().finish();
+                getActivity().startActivity(getActivity().getIntent());
             }
         });
 

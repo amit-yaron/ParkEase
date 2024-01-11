@@ -10,8 +10,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.amityaron.parkease.main.HomeFragment;
 import com.amityaron.parkease.main.ManageFragment;
@@ -21,8 +23,11 @@ import com.amityaron.parkease.main.PersonFragment;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -48,7 +53,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigationView);
+        View headerLayout = navigationView.getHeaderView(0);
+
+        TextView welcomeText = headerLayout.findViewById(R.id.welcomeText);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            welcomeText.setText("Welcome, " + user.getDisplayName());
+        } else {
+            welcomeText.setText("Welcome, Please Log In");
+            navigationView.getMenu().clear();
+            navigationView.inflateMenu(R.menu.nav_drawer_logged_out);
+        }
+
         goToHome();
+    }
+
+    public void getTextForNavDrawer(View view) {
+
     }
 
     public void viewProfileInfo(View view) {
