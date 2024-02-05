@@ -1,22 +1,15 @@
 package com.amityaron.parkease.main;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.amityaron.parkease.AuthActivity;
-import com.amityaron.parkease.MainActivity;
 import com.amityaron.parkease.R;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -53,11 +46,13 @@ public class HomeFragment extends Fragment {
 
         TextView welcomeText = rootView.findViewById(R.id.welcomeText);
 
+
         if (user != null) {
             welcomeText.setText("Welcome, " + user.getDisplayName());
         } else {
             welcomeText.setText("Welcome, Please Log In");
         }
+
 
         return rootView;
     }

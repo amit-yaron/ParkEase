@@ -3,12 +3,17 @@ package com.amityaron.parkease;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Layout;
 import android.view.MenuItem;
@@ -20,6 +25,7 @@ import com.amityaron.parkease.main.ManageFragment;
 import com.amityaron.parkease.main.MapFragment;
 import com.amityaron.parkease.main.PaymentsFragment;
 import com.amityaron.parkease.main.PersonFragment;
+import com.amityaron.parkease.misc.NetworkChangeReceiver;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -35,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         // Handle Navigation Drawer
         Toolbar toolbar = findViewById(R.id.toolbar);

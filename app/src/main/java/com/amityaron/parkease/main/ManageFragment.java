@@ -2,6 +2,8 @@ package com.amityaron.parkease.main;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -155,6 +157,9 @@ public class ManageFragment extends Fragment {
 
                                                     FragmentManager manager = getActivity().getSupportFragmentManager();
                                                     FragmentTransaction transaction = manager.beginTransaction();
+
+                                                    NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                                                    notificationManager.cancel(0);
 
                                                     transaction.replace(R.id.container, new HomeFragment()).commit();
                                                 }

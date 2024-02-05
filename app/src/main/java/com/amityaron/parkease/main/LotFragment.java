@@ -1,10 +1,23 @@
 package com.amityaron.parkease.main;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -34,8 +47,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
@@ -75,6 +90,7 @@ public class LotFragment extends Fragment {
                         .setMessage("Row: " + (row + 1) + " Col: " + (col + 1))
                         .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                         .setPositiveButton("Buy", new DialogInterface.OnClickListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -87,20 +103,50 @@ public class LotFragment extends Fragment {
                                 data.put("lotName", bundle.get("lotName"));
                                 data.put("uid", user.getUid());
 
+                                NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+                                String channelId = "all_notifications"; // You should create a String resource for this instead of storing in a variable
+                                NotificationChannel mChannel = new NotificationChannel(
+                                        channelId,
+                                        "General Notifications",
+                                        NotificationManager.IMPORTANCE_DEFAULT
+                                );
+
+                                notificationManager.createNotificationChannel(mChannel);
+
+                                Intent intent = new Intent(getContext(), getActivity().getClass());
+                                PendingIntent contentIntent = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+                                Notification notification = new Notification.Builder(getContext(), channelId)
+                                        .setContentTitle("You Have Parking")
+                                        .setContentIntent(contentIntent)
+                                        .setWhen(System.currentTimeMillis())
+                                        .setOngoing(true)
+                                        .setSmallIcon(R.drawable.ic_park_foreground)
+                                        .setContentText("You Park In " + "Row: " + (row + 1) + " Col: " + (col + 1))
+                                        .setPriority(Notification.PRIORITY_HIGH)
+                                        .build();
+
+                                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                                    String[] permissions =  { Manifest.permission.POST_NOTIFICATIONS };
+                                    ActivityCompat.requestPermissions(getActivity(), permissions, 1);
+                                    return;
+                                }
+
+
                                 db.collection("parks").add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentReference> task) {
                                         if (task.isSuccessful()) {
-                                            Toast.makeText(getContext(), "yes", Toast.LENGTH_LONG).show();
+
+                                            notificationManager.notify(0, notification);
 
                                             ManageFragment manageFragment = new ManageFragment();
                                             manageFragment.setArguments(bundle);
                                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
                                             transaction.replace(R.id.container, manageFragment);
                                             transaction.commit();
-                                        }
-                                        else {
-                                            Toast.makeText(getContext(), "yes", Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 });
