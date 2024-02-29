@@ -4,4 +4,8 @@
         android:id="@+id/about"
         android:onClick="seeAbout"
         android:title="About" />
+    <item
+        android:id="@+id/admin"
+        android:onClick="seeAdmin"
+        android:title="Admin" />
 </menu>

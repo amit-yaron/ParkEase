@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.amityaron.parkease.main.AdminFragment;
 import com.amityaron.parkease.main.HomeFragment;
 import com.amityaron.parkease.main.ManageFragment;
 import com.amityaron.parkease.main.MapFragment;
@@ -176,6 +177,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .setMessage("This is app for parking car and looking for parking to park car")
                 .setNegativeButton("Cancel", (dialog, which) -> goToHome())
                 .show();
+    }
+
+    public void seeAdmin(MenuItem menuItem) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        transaction.replace(R.id.container, new AdminFragment()).commit();
     }
 
     public void goToHome(MenuItem ignoredMenuItem) {

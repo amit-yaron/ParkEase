@@ -33,7 +33,9 @@ import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.OnMapsSdkInitializedCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -83,6 +85,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
 
         return rootView;
     }
@@ -134,12 +137,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                         .strokeWidth(0f)
                                         .fillColor(0x220000FF));
 
-                        googleMap.addMarker(new MarkerOptions()
+                        Marker marker = googleMap.addMarker(new MarkerOptions()
                                 .position(latLng)
                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 
-                        Log.d("fds", String.valueOf(latitude));
-                        Log.d("fds", String.valueOf(longitude));
+                        marker.setTag("currLocation");
                     }
                 });
 
@@ -168,6 +170,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             public boolean onMarkerClick(@NonNull Marker marker) {
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+                if (marker.getTag().toString().equals("currLocation")) return false;
+
                 db.collection("lots")
                         .document(marker.getTag().toString())
                         .get()
@@ -186,6 +190,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                             .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                                             .setPositiveButton("Buy", (dialog, which) -> {
                                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                                                if (user == null) {
+                                                    Toast.makeText(getContext(), "you not signed in", Toast.LENGTH_LONG).show();
+                                                    return;
+                                                }
                                                 db.collection("parks").whereEqualTo("uid", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
