@@ -24,6 +24,7 @@ import com.amityaron.parkease.MainActivity;
 import com.amityaron.parkease.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -130,10 +131,38 @@ public class AdminFragment extends Fragment {
                     }
                 });
 
-        spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("test", view.toString());
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(view.getContext(), spinner.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+
+                db.collection("lots")
+                        .whereEqualTo("name", spinner.getSelectedItem().toString())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    task.getResult().getDocuments().forEach(new Consumer<DocumentSnapshot>() {
+                                        @Override
+                                        public void accept(DocumentSnapshot documentSnapshot) {
+                                            TextInputEditText name = getActivity().findViewById(R.id.name);
+                                            TextInputEditText stars = getActivity().findViewById(R.id.stars);
+                                            TextInputEditText toll = getActivity().findViewById(R.id.toll);
+
+                                            name.setText(documentSnapshot.get("name").toString());
+                                            stars.setText(documentSnapshot.get("stars").toString());
+                                            toll.setText(documentSnapshot.get("toll").toString());
+                                        }
+                                    });
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
