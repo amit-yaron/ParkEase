@@ -45,35 +45,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         // Handle Navigation Drawer
-        Toolbar toolbar = findViewById(R.id.toolbar);
         DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open the navigation drawer
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigationView);
-        View headerLayout = navigationView.getHeaderView(0);
-
-        TextView welcomeText = headerLayout.findViewById(R.id.welcomeText);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-            welcomeText.setText("Welcome, " + user.getDisplayName());
-        } else {
-            welcomeText.setText("Welcome, Please Log In");
-            navigationView.getMenu().clear();
-            navigationView.inflateMenu(R.menu.nav_drawer_logged_out);
-        }
 
         goToHome();
     }
@@ -95,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .show();
     }
 
-    public void goToLogin(MenuItem item) {
+    public void goToLogin(View view) {
         Intent intent = new Intent(MainActivity.this, AuthActivity.class);
         intent.putExtra("type", "login");
         startActivity(intent);
@@ -115,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         startActivity(intent);
     }
 
-    public void goToRegister(MenuItem item) {
+    public void goToRegister(View view) {
         Intent intent = new Intent(MainActivity.this, AuthActivity.class);
         intent.putExtra("type", "register");
         startActivity(intent);

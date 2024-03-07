@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amityaron.parkease.R;
@@ -45,12 +46,14 @@ public class HomeFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         TextView welcomeText = rootView.findViewById(R.id.welcomeText);
-
+        LinearLayout linearLayout = rootView.findViewById(R.id.layoutHome);
 
         if (user != null) {
             welcomeText.setText("Welcome, " + user.getDisplayName());
+            linearLayout.addView(getLayoutInflater().inflate(R.layout.loginhome, null));
         } else {
             welcomeText.setText("Welcome, Please Log In");
+            linearLayout.addView(getLayoutInflater().inflate(R.layout.logouthome, null));
         }
 
 

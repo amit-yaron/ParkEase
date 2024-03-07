@@ -40,7 +40,7 @@ import java.util.function.Consumer;
  * Use the {@link AdminFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AdminFragment extends Fragment {
+public class  AdminFragment extends Fragment {
 
     public AdminFragment() {
         // Required empty public constructor
