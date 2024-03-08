@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void getTextForNavDrawer(View view) {
 
     }
-
     public void viewProfileInfo(View view) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -95,6 +94,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void goToMaps(MenuItem menuItem) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        transaction.replace(R.id.container, new MapFragment()).commit();
+    }
+
+    public void goToMaps() {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
@@ -152,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .show();
     }
 
-    public void seeAdmin(MenuItem menuItem) {
+    public void goToAdmin(View view) {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 

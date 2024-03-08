@@ -79,4 +79,5 @@ public class PersonFragment extends Fragment {
 
         return rootView;
     }
+
 }

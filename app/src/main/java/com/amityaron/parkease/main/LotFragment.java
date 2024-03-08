@@ -13,6 +13,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -65,6 +68,17 @@ public class LotFragment extends Fragment {
     public LotFragment() {
         // Required empty public constructor
     }
+
+    private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+        @Override
+        public void onActivityResult(Boolean result) {
+            if (result) {
+                ((MainActivity) getActivity()).goToMaps();
+            } else {
+                ((MainActivity) getActivity()).goToHome();
+            }
+        }
+    });
 
     public static LotFragment newInstance(String param1, String param2) {
         LotFragment fragment = new LotFragment();
@@ -128,14 +142,10 @@ public class LotFragment extends Fragment {
                                         .build();
 
                                 if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                                    String[] permissions =  { Manifest.permission.POST_NOTIFICATIONS };
-                                    ActivityCompat.requestPermissions(getActivity(), permissions, 1);
-                                    return;
+                                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
                                 }
 
-
                                 db.collection("parks").add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentReference> task) {
                                         if (task.isSuccessful()) {

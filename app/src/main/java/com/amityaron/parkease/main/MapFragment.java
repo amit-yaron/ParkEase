@@ -10,8 +10,12 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -59,6 +63,17 @@ import java.security.Permission;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
+    Bundle bundle = new Bundle();
+    private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+        @Override
+        public void onActivityResult(Boolean result) {
+            if (result) {
+                ((MainActivity) getActivity()).goToMaps();
+            } else {
+                ((MainActivity) getActivity()).goToHome();
+            }
+        }
+    });
 
     public MapFragment() {
         // Required empty public constructor
@@ -77,93 +92,70 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
 
         return rootView;
     }
 
-    Bundle bundle = new Bundle();
-
-
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-
         fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
-                    @NonNull
-                    @Override
-                    public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
-                        return null;
+            @NonNull
+            @Override
+            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+                return null;
+            }
+
+            @Override
+            public boolean isCancellationRequested() {
+                return false;
+            }
+        }).addOnSuccessListener(getActivity(), location -> {
+            if (location != null) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+
+                LatLng latLng = new LatLng(latitude, longitude);
+
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.0f));
+
+                googleMap.addCircle(new CircleOptions().center(latLng).radius(10000).strokeWidth(0f).fillColor(0x220000FF));
+
+                Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+
+                marker.setTag("currLocation");
+            }
+        });
+
+        db.collection("lots").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot doc : task.getResult()) {
+                        double latitude = (double) doc.get("latitude");
+                        double longitude = (double) doc.get("longitude");
+                        String name = doc.get("name").toString();
+
+                        Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(name));
+
+                        marker.setTag(doc.getId());
                     }
-
-                    @Override
-                    public boolean isCancellationRequested() {
-                        return false;
-                    }
-                })
-                .addOnSuccessListener(getActivity(), location -> {
-                    if (location != null) {
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-
-                        LatLng latLng = new LatLng(latitude, longitude);
-
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.0f));
-
-                        googleMap.addCircle(new CircleOptions()
-                                        .center(latLng)
-                                        .radius(10000)
-                                        .strokeWidth(0f)
-                                        .fillColor(0x220000FF));
-
-                        Marker marker = googleMap.addMarker(new MarkerOptions()
-                                .position(latLng)
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-
-                        marker.setTag("currLocation");
-                    }
-                });
-
-        db.collection("lots").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot doc : task.getResult()) {
-                                double latitude = (double) doc.get("latitude");
-                                double longitude = (double) doc.get("longitude");
-                                String name = doc.get("name").toString();
-
-                                Marker marker = googleMap.addMarker(new MarkerOptions()
-                                        .position(new LatLng(latitude, longitude))
-                                        .title(name));
-
-                                marker.setTag(doc.getId());
-                            }
-                        }
-                    }
-                });
+                }
+            }
+        });
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -172,63 +164,49 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                 if (marker.getTag().toString().equals("currLocation")) return false;
 
-                db.collection("lots")
-                        .document(marker.getTag().toString())
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot doc = task.getResult();
+                db.collection("lots").document(marker.getTag().toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot doc = task.getResult();
 
-                                    new MaterialAlertDialogBuilder(getContext())
-                                            .setTitle(doc.get("name").toString())
-                                            .setMessage(
-                                                    "Address: " + doc.get("address") + ", " + doc.get("city") + "\n"
-                                                            + "Stars: " + doc.get("stars") + "/5" + "\n"
-                                                            + "Toll: " + doc.get("tollperhour") + "₪/h" + "\n")
-                                            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                                            .setPositiveButton("Buy", (dialog, which) -> {
-                                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            new MaterialAlertDialogBuilder(getContext()).setTitle(doc.get("name").toString()).setMessage("Address: " + doc.get("address") + ", " + doc.get("city") + "\n" + "Stars: " + doc.get("stars") + "/5" + "\n" + "Toll: " + doc.get("tollperhour") + "₪/h" + "\n").setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss()).setPositiveButton("Buy", (dialog, which) -> {
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                                                if (user == null) {
-                                                    Toast.makeText(getContext(), "you not signed in", Toast.LENGTH_LONG).show();
-                                                    return;
-                                                }
-                                                db.collection("parks").whereEqualTo("uid", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                        if (task.isSuccessful()) {
-                                                            if (!task.getResult().isEmpty()) {
-                                                                new MaterialAlertDialogBuilder(getContext())
-                                                                        .setTitle("You already have parking")
-                                                                        .setNegativeButton("Cancel", (dialog, which) -> {
-                                                                            dialog.dismiss();
-                                                                        })
-                                                                        .show();
-
-                                                            } else {
-                                                                bundle.putString("lotName", doc.getId());
-                                                                bundle.putString("lotNameString", doc.get("name").toString());
-                                                                bundle.putString("lotToll", doc.get("tollperhour").toString());
-
-                                                                FragmentManager manager = getActivity().getSupportFragmentManager();
-                                                                FragmentTransaction transaction = manager.beginTransaction();
-
-                                                                LotFragment lotFragment = new LotFragment();
-                                                                lotFragment.setArguments(bundle);
-
-                                                                transaction.replace(R.id.container, lotFragment).commit();
-                                                                dialog.dismiss();
-                                                            }
-                                                        }
-                                                    }
-                                                });
-                                            })
-                                            .show();
+                                if (user == null) {
+                                    Toast.makeText(getContext(), "you not signed in", Toast.LENGTH_LONG).show();
+                                    return;
                                 }
-                            }
-                        });
+                                db.collection("parks").whereEqualTo("uid", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            if (!task.getResult().isEmpty()) {
+                                                new MaterialAlertDialogBuilder(getContext()).setTitle("You already have parking").setNegativeButton("Cancel", (dialog, which) -> {
+                                                    dialog.dismiss();
+                                                }).show();
+
+                                            } else {
+                                                bundle.putString("lotName", doc.getId());
+                                                bundle.putString("lotNameString", doc.get("name").toString());
+                                                bundle.putString("lotToll", doc.get("tollperhour").toString());
+
+                                                FragmentManager manager = getActivity().getSupportFragmentManager();
+                                                FragmentTransaction transaction = manager.beginTransaction();
+
+                                                LotFragment lotFragment = new LotFragment();
+                                                lotFragment.setArguments(bundle);
+
+                                                transaction.replace(R.id.container, lotFragment).commit();
+                                                dialog.dismiss();
+                                            }
+                                        }
+                                    }
+                                });
+                            }).show();
+                        }
+                    }
+                });
 
                 return false;
             }

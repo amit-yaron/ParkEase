@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -40,7 +41,7 @@ import java.util.function.Consumer;
  * Use the {@link AdminFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class  AdminFragment extends Fragment {
+public class AdminFragment extends Fragment {
 
     public AdminFragment() {
         // Required empty public constructor
@@ -57,11 +58,42 @@ public class  AdminFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
+
     String m_Text = "";
 
+    public void update(@NonNull View view) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Spinner spinner = view.findViewById(R.id.spinner);
+
+        if (spinner.getSelectedItem().toString().isEmpty()) {
+            Toast.makeText(getContext(), "Please Select Item First", Toast.LENGTH_LONG).show();
+            return;
+        }
+        db.collection("lots")
+                .whereEqualTo("name", spinner.getSelectedItem().toString())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            task.getResult().getDocuments().forEach(new Consumer<DocumentSnapshot>() {
+                                @Override
+                                public void accept(DocumentSnapshot documentSnapshot) {
+                                    TextInputEditText toll = getActivity().findViewById(R.id.toll);
+                                    documentSnapshot
+                                            .getReference()
+                                            .update("tollperhour", Integer.parseInt(toll.getText().toString()));
+                                    Toast.makeText(getContext(), "Toll Updated", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    }
+                });
+
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin, container, false);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -71,6 +103,13 @@ public class  AdminFragment extends Fragment {
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         builder.setView(input);
 
+        view.findViewById(R.id.removeButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                update(view);
+            }
+        });
+
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -79,8 +118,7 @@ public class  AdminFragment extends Fragment {
                 if (m_Text.equals("12345678")) {
                     dialog.dismiss();
                     Toast.makeText(getContext(), "Admin Authenticated", Toast.LENGTH_LONG).show();
-                }
-                else {
+                } else {
                     FragmentManager manager = getActivity().getSupportFragmentManager();
                     FragmentTransaction transaction = manager.beginTransaction();
 
@@ -113,51 +151,48 @@ public class  AdminFragment extends Fragment {
         db.collection("lots")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<String> arraySpinner = new ArrayList<>();
-                            for (DocumentSnapshot document : task.getResult()) {
-                                arraySpinner.add(document.getString("name"));
-                            }
-
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
-                                    android.R.layout.simple_spinner_item, arraySpinner);
-                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            spinner.setAdapter(adapter);
-                        } else {
-                            Log.e("Firestore", "Error getting documents: ", task.getException());
-                        }
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<String> arraySpinner = new ArrayList<>();
+                    for (DocumentSnapshot document : task.getResult()) {
+                        arraySpinner.add(document.getString("name"));
                     }
-                });
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, arraySpinner);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinner.setAdapter(adapter);
+                } else {
+                    Log.e("Firestore", "Error getting documents: ", task.getException());
+                }
+            }
+        });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(view.getContext(), spinner.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
-
                 db.collection("lots")
                         .whereEqualTo("name", spinner.getSelectedItem().toString())
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    task.getResult().getDocuments().forEach(new Consumer<DocumentSnapshot>() {
-                                        @Override
-                                        public void accept(DocumentSnapshot documentSnapshot) {
-                                            TextInputEditText name = getActivity().findViewById(R.id.name);
-                                            TextInputEditText stars = getActivity().findViewById(R.id.stars);
-                                            TextInputEditText toll = getActivity().findViewById(R.id.toll);
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            task.getResult().getDocuments().forEach(new Consumer<DocumentSnapshot>() {
+                                @Override
+                                public void accept(DocumentSnapshot documentSnapshot) {
+                                    TextInputEditText toll = getActivity().findViewById(R.id.toll);
+                                    Object tollValue = documentSnapshot.get("tollperhour");
 
-                                            name.setText(documentSnapshot.get("name").toString());
-                                            stars.setText(documentSnapshot.get("stars").toString());
-                                            toll.setText(documentSnapshot.get("toll").toString());
-                                        }
-                                    });
+                                    if (tollValue != null) {
+                                        toll.setText(tollValue.toString());
+                                    }
+
                                 }
-                            }
-                        });
+                            });
+                        }
+                    }
+                });
             }
 
             @Override
@@ -168,7 +203,4 @@ public class  AdminFragment extends Fragment {
 
         return view;
     }
-
-
-    int i = 0;
 }

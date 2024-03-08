@@ -60,22 +60,6 @@
             android:layout_width="wrap_content"
             android:layout_marginStart="48dp"
             android:gravity="center"
-            android:onClick="goToHome"
-            android:layout_height="36dp">
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_home_foreground"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Go To Home"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_marginStart="48dp"
-            android:gravity="center"
             android:onClick="viewProfileInfo"
             android:layout_height="36dp">
             <ImageView
@@ -86,6 +70,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="View Profile Info"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_marginStart="48dp"
+            android:gravity="center"
+            android:onClick="goToAdmin"
+            android:layout_height="36dp">
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_admin_foreground"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Admin Panel"/>
         </LinearLayout>
         <Button
             android:id="@+id/logout"

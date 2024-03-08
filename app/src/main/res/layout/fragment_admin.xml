@@ -26,7 +26,7 @@
         android:layout_marginTop="44dp"
 
         android:gravity="center"
-        android:text="Lots"
+        android:text="Update Parking Lot Tolls"
         android:textSize="22dp"
         />
 
@@ -37,46 +37,36 @@
         android:layout_marginTop="24dp"
         android:spinnerMode="dropdown"/>
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/name"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:hint="Name"
-        android:textSize="12dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/stars"
-            android:layout_width="40dp"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:hint="Stars"
-            android:textSize="12dp"/>
+            android:text="Toll:"
+            >
+        </TextView>
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/toll"
-            android:layout_width="40dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:hint="Toll"
             android:textSize="12dp"/>
     </LinearLayout>
 
     <Button
         android:id="@+id/removeButton"
         android:layout_width="75dp"
-        android:padding="0dp"
-        android:layout_marginTop="12dp"
         android:layout_height="35dp"
-        android:textSize="12sp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="4dp"
-        android:text="Remove" />
-
+        android:padding="0dp"
+        android:text="Update"
+        android:textSize="12sp" />
 
 
 </LinearLayout>
