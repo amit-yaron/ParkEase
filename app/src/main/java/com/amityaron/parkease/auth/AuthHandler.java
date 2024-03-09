@@ -68,10 +68,16 @@ public class AuthHandler {
                                     .build();
 
                             assert user != null;
-                            user.updateProfile(profilesUpdates);
-
-                            showToast("Sign-up successful");
-                            redirectToMainActivity();
+                            user.updateProfile(profilesUpdates)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                showToast("Sign-up successful");
+                                                redirectToMainActivity();
+                                            }
+                                        }
+                                    });
                         } else {
                             // If sign up fails, display a message to the user.
                             showToast("Sign-up failed. " + task.getException().getMessage());

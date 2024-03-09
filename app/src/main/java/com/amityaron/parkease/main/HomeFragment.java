@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.amityaron.parkease.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 
 /**
  * A simple {@link Fragment} subclass.
