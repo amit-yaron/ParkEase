@@ -64,7 +64,7 @@ public class AuthHandler {
 
                             UserProfileChangeRequest profilesUpdates = new UserProfileChangeRequest.Builder()
                                     .setDisplayName(getDisplayName(email))
-                                    .setPhotoUri(Uri.parse("https://pbs.twimg.com/profile_images/1546346320025247745/wC2QUs0x_400x400.jpg"))
+                                    .setPhotoUri(Uri.parse("https://archive.org/download/twitter-default-pfp/e.png"))
                                     .build();
 
                             assert user != null;

@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:contentDescription="PFP"
-            android:src="@drawable/nigger" />
+            android:src="@drawable/logo" />
     </androidx.cardview.widget.CardView>
 
     <TextView
