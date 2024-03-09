@@ -60,7 +60,6 @@ public class AdminFragment extends Fragment {
 
     }
 
-    String m_Text = "";
 
     public void update(@NonNull View view) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -97,53 +96,12 @@ public class AdminFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin, container, false);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Password");
-
-        final EditText input = new EditText(getContext());
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        builder.setView(input);
-
         view.findViewById(R.id.removeButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 update(view);
             }
         });
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                m_Text = input.getText().toString();
-
-                if (m_Text.equals("12345678")) {
-                    dialog.dismiss();
-                    Toast.makeText(getContext(), "Admin Authenticated", Toast.LENGTH_LONG).show();
-                } else {
-                    FragmentManager manager = getActivity().getSupportFragmentManager();
-                    FragmentTransaction transaction = manager.beginTransaction();
-
-                    Toast.makeText(getContext(), "Admin Authentication Failed", Toast.LENGTH_LONG).show();
-                    transaction.replace(R.id.container, new HomeFragment()).commit();
-                    dialog.cancel();
-                }
-
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                FragmentManager manager = getActivity().getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-
-                transaction.replace(R.id.container, new HomeFragment()).commit();
-
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
 
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
