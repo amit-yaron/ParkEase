@@ -51,6 +51,7 @@ public class HomeFragment extends Fragment {
         if (user != null) {
             welcomeText.setText("Welcome, " + user.getDisplayName());
             linearLayout.addView(getLayoutInflater().inflate(R.layout.loginhome, null));
+
         } else {
             welcomeText.setText("Welcome, Please Log In");
             linearLayout.addView(getLayoutInflater().inflate(R.layout.logouthome, null));

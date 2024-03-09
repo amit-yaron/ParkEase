@@ -88,7 +88,7 @@ public class ManageFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.getResult().getDocuments().isEmpty()) {
-                            text.setText("no parking");
+                            text.setText("You have no active parking");
                             return;
                         }
                         if (task.isSuccessful()) {

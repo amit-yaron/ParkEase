@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -79,10 +80,10 @@ public class AdminFragment extends Fragment {
                             task.getResult().getDocuments().forEach(new Consumer<DocumentSnapshot>() {
                                 @Override
                                 public void accept(DocumentSnapshot documentSnapshot) {
-                                    TextInputEditText toll = getActivity().findViewById(R.id.toll);
+                                    NumberPicker toll = getActivity().findViewById(R.id.toll);
                                     documentSnapshot
                                             .getReference()
-                                            .update("tollperhour", Integer.parseInt(toll.getText().toString()));
+                                            .update("tollperhour", toll.getValue());
                                     Toast.makeText(getContext(), "Toll Updated", Toast.LENGTH_LONG).show();
                                 }
                             });
@@ -181,11 +182,14 @@ public class AdminFragment extends Fragment {
                             task.getResult().getDocuments().forEach(new Consumer<DocumentSnapshot>() {
                                 @Override
                                 public void accept(DocumentSnapshot documentSnapshot) {
-                                    TextInputEditText toll = getActivity().findViewById(R.id.toll);
+                                    NumberPicker toll = getActivity().findViewById(R.id.toll);
                                     Object tollValue = documentSnapshot.get("tollperhour");
 
+                                    toll.setMaxValue(100);
+                                    toll.setMinValue(25);
+
                                     if (tollValue != null) {
-                                        toll.setText(tollValue.toString());
+                                        toll.setValue(Integer.parseInt(tollValue.toString()));
                                     }
 
                                 }

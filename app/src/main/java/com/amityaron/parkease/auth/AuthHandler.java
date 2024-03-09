@@ -72,7 +72,6 @@ public class AuthHandler {
 
                             showToast("Sign-up successful");
                             redirectToMainActivity();
-                            // You can add additional actions here if needed, e.g., redirect to MainActivity
                         } else {
                             // If sign up fails, display a message to the user.
                             showToast("Sign-up failed. " + task.getException().getMessage());
