@@ -2,6 +2,7 @@ package com.amityaron.parkease.main;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -89,11 +90,15 @@ public class ManageFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.getResult().getDocuments().isEmpty()) {
                             text.setText("You have no active parking");
+                            rootView.findViewById(R.id.stop).setVisibility(View.INVISIBLE);
                             return;
                         }
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot doc : task.getResult()) {
                                 ts = (Timestamp) doc.get("value");
+                                @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView rate = rootView.findViewById(R.id.rate);
+                                @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView lotNameString = rootView.findViewById(R.id.lotnameString);
+                                lotNameString.setText("You have been parking in " + doc.get("lotNameString").toString() + " for");
 
                                 if (timer == null) {
                                     timer = new Timer();
@@ -103,7 +108,18 @@ public class ManageFragment extends Fragment {
                                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    text.setText(stringGapDates(ts.toDate()));
+                                                    text.setText(stringGapDates(ts.toDate()) + " Minutes");
+
+                                                    long timePassedMillis = System.currentTimeMillis() - ts.toDate().getTime();
+                                                    long secondsPassed = timePassedMillis / 1000;
+
+                                                    long minutes = (secondsPassed / 60);
+
+                                                    int toll = Integer.parseInt(doc.get("lotToll").toString());
+                                                    int shekels = (int) ((double) minutes / 60 * toll);
+
+                                                    rate.setText("Charge: " + shekels + "₪" + "\nRate: " + doc.get("lotToll").toString() + "₪/h");
+
                                                 }
                                             });
                                         }

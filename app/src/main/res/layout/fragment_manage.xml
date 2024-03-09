@@ -6,16 +6,35 @@
     tools:context=".main.ManageFragment"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/lotnameString"
+        android:textSize="32dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="132dp"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:text="" />
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="wrap_content"
         android:id="@+id/text1"
-        android:textSize="48dp"
+        android:textSize="42dp"
         android:layout_gravity="center"
-        android:layout_marginTop="152dp"
+        android:layout_marginTop="32dp"
         android:gravity="center"
         android:layout_height="wrap_content"
         android:text="Wait..." />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/rate"
+        android:textSize="28dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:text="" />
 
     <Button
         android:layout_width="wrap_content"
