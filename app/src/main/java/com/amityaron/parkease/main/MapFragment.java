@@ -66,13 +66,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     Bundle bundle = new Bundle();
     private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
         @Override
-        public void onActivityResult(Boolean result) {
-            if (result) {
-                ((MainActivity) getActivity()).goToMaps();
-            } else {
-                ((MainActivity) getActivity()).goToHome();
-            }
-        }
+        public void onActivityResult(Boolean result) { }
     });
 
     public MapFragment() {
@@ -109,6 +103,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            Toast.makeText(getContext(), "please allow location permissions.", Toast.LENGTH_LONG).show();
+            ((MainActivity)getActivity()).goToHome();
         }
 
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());

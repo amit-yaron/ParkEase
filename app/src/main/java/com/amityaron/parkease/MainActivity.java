@@ -1,14 +1,25 @@
 package com.amityaron.parkease;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.InputType;
 import android.text.Layout;
 import android.view.MenuItem;
@@ -35,17 +46,45 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
 
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 2;
+    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 3;
+
+    private boolean someDenied = false;
+
+    private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+        @Override
+        public void onActivityResult(Boolean result) {
+            if (!result) someDenied = true;
+        }
+    });
+
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.getMenu().getItem(1).setChecked(true);
+
+        registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+            @Override
+            public void onActivityResult(Boolean result) {
+                if (!result) someDenied = true;
+            }
+        }).launch(Manifest.permission.POST_NOTIFICATIONS);
+
+
+        if (someDenied) {
+            new MaterialAlertDialogBuilder(MainActivity.this)
+                    .setTitle("Go to settings and allow permissions you have denied")
+                    .setCancelable(false)
+                    .show();
+        }
 
         goToHome();
     }
-
 
 
     public void viewProfileInfo(View view) {
@@ -133,6 +172,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToPerson(View view) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+
+            transaction.replace(R.id.container, new PersonFragment()).commit();
+            bottomNavigationView.getMenu().getItem(0).setChecked(true);
+        } else {
+            new MaterialAlertDialogBuilder(MainActivity.this)
+                    .setTitle("You're not logged in")
+                    .setNegativeButton("Cancel", (dialog, which) -> goToHome())
+                    .setPositiveButton("Log In", (dialog, which) -> goToLogin())
+                    .show();
+        }
+    }
+
+    public void goToPerson() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
