@@ -1,21 +1,13 @@
 package com.amityaron.parkease;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.Layout;
@@ -31,11 +23,9 @@ import com.amityaron.parkease.main.ManageFragment;
 import com.amityaron.parkease.main.MapFragment;
 import com.amityaron.parkease.main.PaymentsFragment;
 import com.amityaron.parkease.main.PersonFragment;
-import com.amityaron.parkease.misc.NetworkChangeReceiver;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -43,24 +33,24 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
+    BottomNavigationView bottomNavigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        // Handle Navigation Drawer
-        DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
-
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.getMenu().getItem(1).setChecked(true);
 
         goToHome();
     }
 
-    public void getTextForNavDrawer(View view) {
 
-    }
+
     public void viewProfileInfo(View view) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
 
         new MaterialAlertDialogBuilder(MainActivity.this)
                 .setTitle("Profile Info")
@@ -103,11 +93,13 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = manager.beginTransaction();
 
         transaction.replace(R.id.container, new MapFragment()).commit();
+        bottomNavigationView.getMenu().getItem(2).setChecked(true);
     }
 
     public void goToMaps() {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
+        bottomNavigationView.getMenu().getItem(2).setChecked(true);
 
         transaction.replace(R.id.container, new MapFragment()).commit();
     }
@@ -117,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
+        bottomNavigationView.getMenu().getItem(2).setChecked(true);
         transaction.replace(R.id.container, new MapFragment()).commit();
     }
 
@@ -128,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
 
+            bottomNavigationView.getMenu().getItem(0).setChecked(true);
             transaction.replace(R.id.container, new PersonFragment()).commit();
         } else {
             new MaterialAlertDialogBuilder(MainActivity.this)
@@ -146,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
             FragmentTransaction transaction = manager.beginTransaction();
 
             transaction.replace(R.id.container, new PersonFragment()).commit();
+            bottomNavigationView.getMenu().getItem(0).setChecked(true);
         } else {
             new MaterialAlertDialogBuilder(MainActivity.this)
                     .setTitle("You're not logged in")
@@ -155,11 +150,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void seeAbout(MenuItem menuItem) {
+    public void seeAbout(View view) {
         new MaterialAlertDialogBuilder(MainActivity.this)
                 .setTitle("About")
                 .setMessage("This is app for parking car and looking for parking to park car")
-                .setNegativeButton("Cancel", (dialog, which) -> goToHome())
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
@@ -206,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
     public void goToHome(MenuItem ignoredMenuItem) {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
+        bottomNavigationView.getMenu().getItem(1).setChecked(true);
 
         transaction.replace(R.id.container, new HomeFragment()).commit();
     }
@@ -229,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = manager.beginTransaction();
 
         transaction.replace(R.id.container, new HomeFragment()).commit();
+        bottomNavigationView.getMenu().getItem(1).setChecked(true);
     }
 
 

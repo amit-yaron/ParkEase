@@ -12,7 +12,7 @@
         android:textSize="42dp"
         android:text="Choose"
         android:layout_gravity="center"
-        android:layout_marginTop="42dp"/>
+        android:layout_marginTop="138dp"/>
 
     <GridLayout
         android:id="@+id/gridLayout"

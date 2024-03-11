@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item
-        android:id="@+id/person"
+        android:id="@+id/person_id"
         android:onClick="goToPerson"
         android:title="Person"
         android:icon="@drawable/ic_person_foreground"/>
     <item
-        android:id="@+id/home"
+        android:id="@+id/home_id"
         android:onClick="goToHome"
         android:title="Home"
         android:icon="@drawable/ic_home_foreground"/>
     <item
-        android:id="@+id/list"
+        android:id="@+id/list_id"
         android:onClick="goToMaps"
         android:title="Lots"
-        android:icon="@drawable/ic_list_foreground"/>
+        android:icon="@drawable/ic_park_foreground"/>
 </menu>

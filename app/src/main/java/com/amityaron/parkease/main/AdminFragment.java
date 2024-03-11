@@ -143,8 +143,8 @@ public class AdminFragment extends Fragment {
                                     NumberPicker toll = getActivity().findViewById(R.id.toll);
                                     Object tollValue = documentSnapshot.get("tollperhour");
 
-                                    toll.setMaxValue(100);
-                                    toll.setMinValue(25);
+                                    toll.setMaxValue(150);
+                                    toll.setMinValue(15);
 
                                     if (tollValue != null) {
                                         toll.setValue(Integer.parseInt(tollValue.toString()));

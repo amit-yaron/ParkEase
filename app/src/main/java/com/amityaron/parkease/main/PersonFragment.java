@@ -1,21 +1,27 @@
 package com.amityaron.parkease.main;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.CAMERA_SERVICE;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amityaron.parkease.MainActivity;
 import com.amityaron.parkease.R;
 import com.amityaron.parkease.auth.AuthHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -49,8 +57,8 @@ public class PersonFragment extends Fragment {
     View view;
     FirebaseUser firebaseUser;
 
-    private Button selectImageButton;
-    private Uri filePath;
+    private Uri filePath = null;
+    public Uri imageUri;
 
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
@@ -116,26 +124,46 @@ public class PersonFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Open File Upload
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent, PICK_IMAGE_REQUEST);
+                Intent galleryIntent = new Intent();
+                galleryIntent.setType("image/*");
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
 
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
+                Intent chooser = Intent.createChooser(cameraIntent, "Some text here");
+                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { galleryIntent });
+
+                startActivityForResult(chooser, PICK_IMAGE_REQUEST);
             }
         });
 
         return rootView;
     }
 
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            filePath = data.getData();
-            // You can display the image here if needed
+
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE_REQUEST) {
+            // Check if the data intent is not null
+            if (data != null) {
+                if (data.getData() != null) {
+                        imageUri = data.getData();
+                } else {
+                    imageUri = getImageUri(getContext(), (Bitmap) data.getExtras().get("data"));
+                }
+            }
+
             uploadFile();
         }
+
     }
 
     private void refreshPfp() {
@@ -159,9 +187,9 @@ public class PersonFragment extends Fragment {
     }
 
     private void uploadFile() {
-        if (filePath != null) {
+        if (imageUri != null) {
             StorageReference imageReference = storageReference.child("profile_pictures/" + System.currentTimeMillis() + ".jpg");
-            imageReference.putFile(filePath)
+            imageReference.putFile(imageUri)
                     .addOnSuccessListener(taskSnapshot -> {
                         imageReference.getDownloadUrl().addOnSuccessListener(uri -> {
                             String imageUrl = uri.toString();
@@ -188,6 +216,8 @@ public class PersonFragment extends Fragment {
                         // Handle unsuccessful uploads
                         Toast.makeText(getContext(), "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
+        } else {
+            Toast.makeText(getContext(), "imageUri Null", Toast.LENGTH_LONG).show();
         }
     }
 

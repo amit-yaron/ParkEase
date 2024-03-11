@@ -32,7 +32,7 @@
 
     <Spinner
         android:id="@+id/spinner"
-        android:layout_width="220dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:spinnerMode="dropdown"/>
@@ -48,13 +48,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Toll:"
+            android:layout_gravity="center_horizontal"
+            android:textSize="18dp"
             >
         </TextView>
 
 
         <NumberPicker
             android:id="@+id/toll"
-            android:layout_width="match_parent"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal" />
     </LinearLayout>

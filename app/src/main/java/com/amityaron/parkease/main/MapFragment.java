@@ -130,7 +130,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                 LatLng latLng = new LatLng(latitude, longitude);
 
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.0f));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 9.0f));
 
                 googleMap.addCircle(new CircleOptions().center(latLng).radius(10000).strokeWidth(0f).fillColor(0x220000FF));
 
