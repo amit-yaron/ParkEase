@@ -1,6 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="card_elevation" />
-    <dimen name="card_corner_radius" />
-    <dimen name="card_max_elevation" />
-</resources>
+<resources></resources>

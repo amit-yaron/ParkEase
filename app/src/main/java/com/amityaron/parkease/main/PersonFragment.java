@@ -1,30 +1,16 @@
 package com.amityaron.parkease.main;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.CAMERA_SERVICE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -34,6 +20,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.amityaron.parkease.MainActivity;
 import com.amityaron.parkease.R;
@@ -50,8 +44,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -61,8 +53,6 @@ public class PersonFragment extends Fragment {
 
     View view;
     FirebaseUser firebaseUser;
-
-    private Uri filePath = null;
     public Uri imageUri;
 
     private DatabaseReference databaseReference;
@@ -109,7 +99,7 @@ public class PersonFragment extends Fragment {
         storageReference = FirebaseStorage.getInstance().getReference();
 
         TextView profileName = rootView.findViewById(R.id.profileName);
-        ImageView pfp = rootView.findViewById(R.id.pfp);
+        ImageView pfp = rootView.findViewById(R.id.pfp); 
 
         view = rootView;
         firebaseUser = user;

@@ -46,6 +46,7 @@ public class HomeFragment extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+
         TextView welcomeText = rootView.findViewById(R.id.welcomeText);
         LinearLayout linearLayout = rootView.findViewById(R.id.layoutHome);
 
