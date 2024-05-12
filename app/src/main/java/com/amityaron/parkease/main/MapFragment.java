@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.amityaron.parkease.MainActivity;
 import com.amityaron.parkease.R;
+import com.amityaron.parkease.auth.AuthHandler;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
@@ -64,6 +65,8 @@ import java.security.Permission;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
     Bundle bundle = new Bundle();
+    AuthHandler authHandler = new AuthHandler(getContext());
+
     private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
         @Override
         public void onActivityResult(Boolean result) { }
@@ -99,7 +102,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -139,7 +141,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        db.collection("lots").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        authHandler.collection("lots").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -159,11 +161,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-
                 if (marker.getTag().toString().equals("currLocation")) return false;
 
-                db.collection("lots").document(marker.getTag().toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                authHandler.collection("lots").document(marker.getTag().toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
@@ -176,7 +176,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     Toast.makeText(getContext(), "you not signed in", Toast.LENGTH_LONG).show();
                                     return;
                                 }
-                                db.collection("parks").whereEqualTo("uid", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                authHandler.collection("parks").whereEqualTo("uid", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                         if (task.isSuccessful()) {

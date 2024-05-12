@@ -16,13 +16,18 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class AuthHandler {
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private Context mContext;
 
     public AuthHandler(Context context) {
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         mContext = context;
     }
 
@@ -52,6 +57,9 @@ public class AuthHandler {
                 });
     }
 
+    public CollectionReference collection(String name) {
+        return db.collection(name);
+    }
 
     public void signup(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)

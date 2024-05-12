@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amityaron.parkease.R;
+import com.amityaron.parkease.auth.AuthHandler;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.UserInfo;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
+
 
     public HomeFragment() {
         // Required empty public constructor

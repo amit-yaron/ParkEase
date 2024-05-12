@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.amityaron.parkease.R;
+import com.amityaron.parkease.auth.AuthHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -31,6 +32,8 @@ import java.util.function.Consumer;
  * create an instance of this fragment.
  */
 public class AdminFragment extends Fragment {
+
+    AuthHandler authHandler = new AuthHandler(getContext());
 
     public AdminFragment() {
         // Required empty public constructor
@@ -50,14 +53,13 @@ public class AdminFragment extends Fragment {
 
 
     public void update(@NonNull View view) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         Spinner spinner = view.findViewById(R.id.spinner);
 
         if (spinner.getSelectedItem().toString().isEmpty()) {
             Toast.makeText(getContext(), "Please Select Item First", Toast.LENGTH_LONG).show();
             return;
         }
-        db.collection("lots")
+        authHandler.collection("lots")
                 .whereEqualTo("name", spinner.getSelectedItem().toString())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -93,10 +95,9 @@ public class AdminFragment extends Fragment {
         });
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         Spinner spinner = view.findViewById(R.id.spinner);
 
-        db.collection("lots")
+        authHandler.collection("lots")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -119,7 +120,7 @@ public class AdminFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                db.collection("lots")
+                authHandler.collection("lots")
                         .whereEqualTo("name", spinner.getSelectedItem().toString())
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

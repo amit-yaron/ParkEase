@@ -173,7 +173,7 @@ public class PersonFragment extends Fragment {
 
     }
 
-    private void refreshPfp() {
+        private void refreshPfp() {
         ImageView pfp = view.findViewById(R.id.pfp);
 
         StrictMode.ThreadPolicy gfgPolicy = new StrictMode.ThreadPolicy.Builder().permitAll().build();

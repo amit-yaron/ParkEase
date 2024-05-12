@@ -37,6 +37,7 @@ import android.widget.Toast;
 import com.amityaron.parkease.AuthActivity;
 import com.amityaron.parkease.MainActivity;
 import com.amityaron.parkease.R;
+import com.amityaron.parkease.auth.AuthHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -64,6 +65,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * create an instance of this fragment.
  */
 public class LotFragment extends Fragment {
+
+    AuthHandler authHandler = new AuthHandler(getContext());
 
     public LotFragment() {
         // Required empty public constructor
@@ -107,7 +110,6 @@ public class LotFragment extends Fragment {
                             @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
                                 Map<String, Object> data = new HashMap<>();
@@ -145,7 +147,7 @@ public class LotFragment extends Fragment {
                                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
                                 }
 
-                                db.collection("parks").add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                authHandler.collection("parks").add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentReference> task) {
                                         if (task.isSuccessful()) {
@@ -187,10 +189,9 @@ public class LotFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_lot, container, false);
 
         GridLayout gridLayout = rootView.findViewById(R.id.gridLayout);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         Bundle bundle = this.getArguments();
 
-        db.collection("lots")
+        authHandler.collection("lots")
                 .document(bundle.get("lotName").toString())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

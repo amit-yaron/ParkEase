@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amityaron.parkease.R;
+import com.amityaron.parkease.auth.AuthHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -31,6 +32,7 @@ import java.util.Date;
 
 public class PaymentsFragment extends Fragment {
 
+    AuthHandler authHandler = new AuthHandler(getContext());
 
     public PaymentsFragment() {
         // Required empty public constructor
@@ -57,9 +59,8 @@ public class PaymentsFragment extends Fragment {
 
         LinearLayout linearLayout = rootView.findViewById(R.id.list);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("payments")
+        authHandler.collection("payments")
                 .whereEqualTo("uid", user.getUid())
                 .orderBy("date", Query.Direction.DESCENDING)
                 .get()

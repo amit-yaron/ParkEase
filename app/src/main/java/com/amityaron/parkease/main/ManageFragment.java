@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amityaron.parkease.R;
+import com.amityaron.parkease.auth.AuthHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -66,7 +67,7 @@ public class ManageFragment extends Fragment {
 
     }
 
-    FirebaseFirestore db;
+    AuthHandler authHandler = new AuthHandler(getContext());
     FirebaseAuth user;
     Timer timer;
     TextView text;
@@ -78,11 +79,10 @@ public class ManageFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_manage, container, false);
 
-        db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance();
         text = rootView.findViewById(R.id.text1);
 
-        db.collection("parks")
+        authHandler.collection("parks")
                 .whereEqualTo("uid", user.getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -134,7 +134,7 @@ public class ManageFragment extends Fragment {
         rootView.findViewById(R.id.stop).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                db.collection("parks")
+                authHandler.collection("parks")
                         .whereEqualTo("uid", user.getUid())
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -142,7 +142,7 @@ public class ManageFragment extends Fragment {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 for (QueryDocumentSnapshot doc : task.getResult()) {
 
-                                    db.collection("parks").document(doc.getId()).delete();
+                                    authHandler.collection("parks").document(doc.getId()).delete();
                                     timer.cancel();
                                     text.setText("it is over");
 
@@ -164,7 +164,7 @@ public class ManageFragment extends Fragment {
                                     data.put("shekels", shekels);
                                     data.put("lotId", doc.get("lotName"));
 
-                                    db.collection("payments")
+                                    authHandler.collection("payments")
                                             .add(data)
                                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                 @Override
@@ -190,44 +190,6 @@ public class ManageFragment extends Fragment {
         });
 
         return rootView;
-    }
-
-    void updateCounter(View rootView) {
-
-        db.collection("parks")
-                .whereEqualTo("uid", user.getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot doc : task.getResult()) {
-                                Timestamp date1 = (Timestamp) doc.get("value");
-
-                                if (timer == null) {
-                                    timer = new Timer();
-                                    timer.scheduleAtFixedRate(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            // Use a Handler to post updates to the main thread
-                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    text.setText(stringGapDates(date1.toDate()));
-                                                }
-                                            });
-                                        }
-                                    }, 0, 1000);
-                                } else {
-                                    Toast.makeText(getContext(), "timer exist", Toast.LENGTH_LONG).show();
-                                }
-
-                            }
-
-                        }
-                        return;
-                    }
-                });
     }
 
 
