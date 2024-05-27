@@ -169,7 +169,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         if (task.isSuccessful()) {
                             DocumentSnapshot doc = task.getResult();
 
-                            new MaterialAlertDialogBuilder(getContext()).setTitle(doc.get("name").toString()).setMessage("Address: " + doc.get("address") + ", " + doc.get("city") + "\n" + "Stars: " + doc.get("stars") + "/5" + "\n" + "Toll: " + doc.get("tollperhour") + "₪/h" + "\n").setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss()).setPositiveButton("Buy", (dialog, which) -> {
+                            new MaterialAlertDialogBuilder(getContext()).setTitle(doc.get("name").toString()).setMessage("Address: " + doc.get("address") + ", " + doc.get("city") + "\n" + "Toll: " + doc.get("tollperhour") + "₪/h" + "\n").setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss()).setPositiveButton("Buy", (dialog, which) -> {
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                                 if (user == null) {

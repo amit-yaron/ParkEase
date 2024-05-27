@@ -150,7 +150,7 @@ public class LotFragment extends Fragment {
                                 authHandler.collection("parks").add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentReference> task) {
-                                        if (task.isSuccessful()) {
+                                        if (task.isSuccessful() && getFragmentManager() != null) {
 
                                             notificationManager.notify(0, notification);
 

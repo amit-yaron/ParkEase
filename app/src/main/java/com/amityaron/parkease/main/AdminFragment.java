@@ -1,19 +1,27 @@
 package com.amityaron.parkease.main;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import com.amityaron.parkease.MainActivity;
 import com.amityaron.parkease.R;
 import com.amityaron.parkease.auth.AuthHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -51,6 +59,42 @@ public class AdminFragment extends Fragment {
 
     }
 
+    public void openUploadLotButton(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Paste formatted lot json \n *There Is No Format Validator*");
+        builder.setMessage("Format: " +
+                "[{\n" +
+                "    \"address\": \"String\",\n" +
+                "    \"city\": \"String\",\n" +
+                "    \"latitude\": double,\n" +
+                "    \"longitude\": double,\n" +
+                "    \"lot\": \"boolean[][]\",\n" +
+                "    \"name\": \"String\",\n" +
+                "    \"tollperhour\": int\n" +
+                "  }]");
+
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String jsonText = input.getText().toString();
+
+                new UploadJsonLots(jsonText, getContext()).uploadLotsDataToFirebase();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
 
     public void update(@NonNull View view) {
         Spinner spinner = view.findViewById(R.id.spinner);
@@ -87,6 +131,9 @@ public class AdminFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin, container, false);
 
+        Button jsonButton = view.findViewById(R.id.uploadJsonButton);
+
+        jsonButton.setOnClickListener(this::openUploadLotButton);
         view.findViewById(R.id.removeButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
